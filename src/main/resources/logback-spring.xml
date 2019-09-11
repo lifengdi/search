@@ -1,0 +1,77 @@
+<configuration scan="false" scanPeriod="60 seconds" debug="false">
+    <contextName>generate-file</contextName>
+
+    <!--mq out config start-->
+    <springProperty scope="context" name="mq_host" source="spring.rabbitmq-log.host"/>
+    <springProperty scope="context" name="mq_port" source="spring.rabbitmq-log.port"/>
+    <springProperty scope="context" name="mq_username" source="spring.rabbitmq-log.username"/>
+    <springProperty scope="context" name="mq_password" source="spring.rabbitmq-log.password"/>
+    <springProperty scope="context" name="mq_virtualHost" source="spring.rabbitmq-log.virtual-host"/>
+    <springProperty scope="context" name="mq_exchangeName" source="spring.rabbitmq-log.exchangeName"/>
+    <springProperty scope="context" name="mq_routingKey" source="spring.rabbitmq-log.routingKey"/>
+    <springProperty scope="context" name="mq_indexName" source="spring.rabbitmq-log.indexName"/>
+    <springProperty scope="context" name="app_name" source="spring.application.name"/>
+    <springProperty scope="context" name="app_env" source="info.env"/>
+    <!--mq out config end-->
+
+    <property name="date_format" value="yyyy-MM-dd'T'HH:mm:ss.SSS+0800"/>
+
+    <!--es row message-->
+    <property name="MQ_PATTERN"
+              value='{"appEnv":"${app_env}","logType":"OUT","esIndex":"${mq_indexName}","serverIp":"%X{ip}","hostname":"${app_name}","timeStamp":"%date{${date_format}}","level":"%level","class":"%logger","message":"%msg"}%n'/>
+
+    <property name="log.path" value="./logs/application.log"/>
+    <property name="log.path.error" value="./logs/error.log"/>
+    <property name="LOGPATH" value="logs/"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%date{yyyy-MM-dd HH:mm:ss}  %highlight(%-5level) %magenta(%-4relative) --- [%yellow(%15.15thread)] %cyan(%-40.40logger{36}) : %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN_SRC"
+              value="%date{yyyy-MM-dd HH:mm:ss}  %-5level %-4relative --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE_NORMAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGPATH}/application.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大128MB时会被压缩和切割 -->
+                <maxFileSize>128 MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN_SRC}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <file>${log.path.error}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGPATH}/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大128MB时会被压缩和切割 -->
+                <maxFileSize>128 MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN_SRC}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING_FILE_NORMAL"/>
+        <appender-ref ref="ROLLING_FILE_ERROR"/>
+    </root>
+</configuration>

@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /search
+spring:
+  application:
+    name: search
+  data:
+    elasticsearch:
+      cluster-name: my-cluster
+      cluster-nodes: localhost:9300
+  rabbitmq:
+    defaultUri: amqp://guest:guest@localhost:5672/b2c_mq
+  jackson:
+    default-property-inclusion: non_null
+
+info:
+  env: test
+
+logging:
+  file: application.log
+  path: .
+  level:
+    root: info
+    com.lifengdi.store.client: DEBUG
+
+index-entity:
+  configs:
+    - docCode: store
+      indexName: store
+      type: base
+      documentPath: com.lifengdi.document.StoreDocument
