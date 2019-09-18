@@ -9,13 +9,8 @@ spring:
     elasticsearch:
       cluster-name: my-cluster
       cluster-nodes: localhost:9300
-  rabbitmq:
-    defaultUri: amqp://guest:guest@localhost:5672/b2c_mq
   jackson:
     default-property-inclusion: non_null
-
-info:
-  env: test
 
 logging:
   file: application.log
