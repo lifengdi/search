@@ -2,24 +2,34 @@ package com.lifengdi.search;
 
 import com.lifengdi.model.FieldDefinition;
 import com.lifengdi.model.Key;
+import com.lifengdi.model.MyBucket;
 import com.lifengdi.search.enums.QueryTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.DoubleTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static com.lifengdi.global.Global.*;
 
@@ -48,6 +58,22 @@ public class SearchService {
                              Map<String, Map<Key, FieldDefinition>> keyMappingsMap) {
         SearchQuery searchQuery = buildSearchQuery(params, indexName, type, defaultSort, keyMappings, keyMappingsMap);
         return elasticsearchTemplate.queryForPage(searchQuery, Map.class);
+    }
+
+    protected List aggregate(Map<String, String> params, String indexName, String type,
+                                            Map<Key, FieldDefinition> keyMappings,
+                                            Map<String, Map<Key, FieldDefinition>> keyMappingsMap) {
+        SearchQuery searchQuery = buildSearchQuery(params, indexName, type, null, keyMappings, keyMappingsMap);
+        AggregatedPage<Map> aggregatedPage = elasticsearchTemplate.queryForPage(searchQuery, Map.class);
+
+        return  aggregatedPage.getAggregations().asList().stream().map(aggregation -> {
+            MultiBucketsAggregation bucketsAggregation = (MultiBucketsAggregation)aggregation;
+            return Collections.singletonMap(aggregation.getName(), bucketsAggregation.getBuckets()
+                    .stream()
+                    .map(bucket -> new MyBucket(bucket.getKey(), bucket.getDocCount()))
+                    .collect(Collectors.toList())
+            );
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -131,6 +157,7 @@ public class SearchService {
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         BoolQueryBuilder boolFilterBuilder = QueryBuilders.boolQuery();
+
 
         Map<String, BoolQueryBuilder> nestedMustMap = new HashMap<>();
         Map<String, BoolQueryBuilder> nestedMustNotMap = new HashMap<>();
@@ -240,6 +267,12 @@ public class SearchService {
                             break;
                         case EQUAL_IGNORE_CASE:
                             boolFilterBuilder.must(QueryBuilders.termQuery(queryName, queryValue.toLowerCase()));
+                            break;
+                        case AGGREGATION:
+                            searchQueryBuilder.addAggregation(AggregationBuilders.terms(v.getKey())
+                                    .field(queryName)
+                                    .showTermDocCountError(true)
+                            );
                             break;
                         default:
                             boolFilterBuilder.must(QueryBuilders.termQuery(queryName, queryValue));

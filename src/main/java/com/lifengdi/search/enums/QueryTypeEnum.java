@@ -58,5 +58,10 @@ public enum QueryTypeEnum {
      */
     PREFIX,
 
+    /**
+     * 聚合
+     */
+    AGGREGATION,
+
     ;
 }

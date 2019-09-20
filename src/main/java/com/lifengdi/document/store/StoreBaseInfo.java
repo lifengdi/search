@@ -54,6 +54,7 @@ public class StoreBaseInfo {
      * 门店类型
      */
     @Field(type = FieldType.Integer)
+    @DefinitionQuery(key = "typeAgg", type = QueryTypeEnum.AGGREGATION)
     private Integer type;
 
     /**
@@ -73,6 +74,7 @@ public class StoreBaseInfo {
      * 城市名称
      */
     @Field(type = FieldType.Keyword)
+    @DefinitionQuery(key = "cityNameAgg", type = QueryTypeEnum.AGGREGATION)
     private String cityName;
 
     /**

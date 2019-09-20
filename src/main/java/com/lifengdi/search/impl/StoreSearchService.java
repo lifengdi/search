@@ -9,11 +9,13 @@ import com.lifengdi.search.SearchService;
 import com.lifengdi.search.mapping.KeyMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +59,12 @@ public class StoreSearchService extends SearchService {
     public Page<Map> search(Map<String, String> params) {
         IndexConfig config = indexEntity.getConfigByDocCode(DOC_CODE);
         return commonSearch(params, config.getIndexName(), config.getType(), DEFAULT_SORT,
+                keyMappings, keyMappingsMap);
+    }
+
+    public List aggregate(Map<String, String> params) {
+        IndexConfig config = indexEntity.getConfigByDocCode(DOC_CODE);
+        return aggregate(params, config.getIndexName(), config.getType(),
                 keyMappings, keyMappingsMap);
     }
 
