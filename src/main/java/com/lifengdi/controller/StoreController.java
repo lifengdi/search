@@ -1,8 +1,5 @@
 package com.lifengdi.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lifengdi.docindex.service.StoreDocumentIndexService;
 import com.lifengdi.exception.BaseException;
 import com.lifengdi.global.Global;
@@ -28,12 +25,6 @@ public class StoreController extends BaseController {
 
     @Resource
     private StoreSearchService storeSearchService;
-
-    @Resource
-    private ObjectMapper objectMapper;
-
-    private final TypeReference<Map<String, Object>> typeReference = new TypeReference<Map<String, Object>>() {
-    };
 
     /**
      * 保存索引
