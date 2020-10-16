@@ -95,4 +95,16 @@ public class StoreController extends BaseController {
         return ResponseResult.success(null);
     }
 
+    @PostMapping("/scroll")
+    public ResponseResult scroll(@RequestBody Map<String, String> params) {
+
+        return ResponseResult.success(storeSearchService.scroll(params));
+    }
+
+    @GetMapping("/scroll/clear/{scrollId}")
+    public ResponseResult clearScroll(@PathVariable String scrollId) {
+        storeSearchService.clearScroll(scrollId);
+        return ResponseResult.success(null);
+    }
+
 }

@@ -25,3 +25,4 @@ index-entity:
       indexName: store
       type: base
       documentPath: com.lifengdi.document.StoreDocument
+      scrollTimeInMillis: 60000

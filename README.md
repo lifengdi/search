@@ -53,3 +53,21 @@ URL：/store/get/{id}
 URL：/store/sync/bulk/update
 
 请求方式：POST
+
+### 游标查询
+
+URL：/store/scroll
+
+请求方式：POST
+
+游标查询分为开启和继续两个步骤。
+
+`_scrollId`：继续同一个游标查询的时候此参数为必填，开启一个新的游标查询的时候，此参数为空
+
+### 游标清除
+
+URL：/scroll/clear/{scrollId}
+
+请求方式：GET
+
+若条件允许的话，尽量将游标查询及时关闭，以释放ES集群的资源，降低负担。

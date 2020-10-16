@@ -38,6 +38,9 @@ public class SearchService {
     @Resource
     private ElasticsearchTemplate elasticsearchTemplate;
 
+    // 游标ID的参数名
+    public static final String SCROLL_ID = "_scrollId";
+
     /**
      * 通用查询
      * @param params 查询入参
@@ -400,4 +403,39 @@ public class SearchService {
         return null;
     }
 
+    /**
+     * 游标查询
+     * @param params 查询入参
+     * @param indexName 索引名称
+     * @param type 索引类型
+     * @param defaultSort 默认排序
+     * @param keyMappings 字段映射
+     * @param keyMappingsMap 索引对应字段映射
+     * @param scrollTimeInMillis 游标开启的时间
+     * @return Page
+     */
+    protected Page<Map> commonStartScroll(Map<String, String> params, String indexName, String type, String defaultSort,
+                                     Map<Key, FieldDefinition> keyMappings,
+                                     Map<String, Map<Key, FieldDefinition>> keyMappingsMap, long scrollTimeInMillis) {
+        SearchQuery searchQuery = buildSearchQuery(params, indexName, type, defaultSort, keyMappings, keyMappingsMap);
+        return elasticsearchTemplate.startScroll(scrollTimeInMillis, searchQuery, Map.class);
+    }
+
+    /**
+     * 游标查询
+     * @param scrollId 游标ID
+     * @param scrollTimeInMillis 游标开启的时间
+     * @return Page
+     */
+    protected Page<Map> commonContinueScroll(String scrollId, long scrollTimeInMillis) {
+        return elasticsearchTemplate.continueScroll(scrollId, scrollTimeInMillis, Map.class);
+    }
+
+    /**
+     * 根据游标ID清除游标（提早释放资源，降低ES的负担）
+     * @param scrollId 游标ID
+     */
+    protected void clearScroll(String scrollId) {
+        elasticsearchTemplate.clearScroll(scrollId);
+    }
 }

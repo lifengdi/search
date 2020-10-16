@@ -29,4 +29,9 @@ public class IndexConfig {
      */
     private String documentPath;
 
+    /**
+     * 游标开启的时间
+     */
+    private Long scrollTimeInMillis;
+
 }
