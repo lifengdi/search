@@ -12,6 +12,8 @@ ES版本：6.8.2
 
 [关于Elasticsearch文档的描述以及如何操作文档的详细总结](https://www.lifengdi.com/archives/article/tech/934)
 
+[SpringBoot整合Elasticsearch游标查询（scroll）](https://www.lifengdi.com/archives/article/2119)
+
 ## 接口调用须知
 - 接口统一前缀：/search
 - 默认端口：8080
