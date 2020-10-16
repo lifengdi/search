@@ -267,6 +267,7 @@ public class SearchService {
                             searchQueryBuilder.addAggregation(AggregationBuilders.terms(v.getKey())
                                     .field(queryName)
                                     .showTermDocCountError(true)
+                                    .size(Integer.MAX_VALUE)
                             );
                             break;
                         default:
