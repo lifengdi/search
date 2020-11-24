@@ -36,13 +36,14 @@ public class SearchApplicationTests {
     public void creatIndex() {
         // 创建索引文档
         StoreDocument document = new StoreDocument();
-        document.setId("1");
+        document.setId("2");
 
         StoreBaseInfo storeBaseInfo = new StoreBaseInfo();
         storeBaseInfo.setCreatedTime(DateTime.now());
         storeBaseInfo.setStoreId("1");
         storeBaseInfo.setStoreName("门店1");
         storeBaseInfo.setUpdatedTime(DateTime.now());
+        storeBaseInfo.setCreatedTime(DateTime.now());
         document.setBaseInfo(storeBaseInfo);
 
         StoreTags storeTags = new StoreTags();
