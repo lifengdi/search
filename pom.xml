@@ -19,7 +19,7 @@
         <testng.version>6.14.2</testng.version>
         <spring-cloud-dependencies.version>Greenwich.RELEASE</spring-cloud-dependencies.version>
         <kibana-logging-spring-boot-starter.version>1.2.4</kibana-logging-spring-boot-starter.version>
-        <fastjson.version>1.2.47</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <alarm-spring-boot-starter.version>1.0.15-SNAPSHOT</alarm-spring-boot-starter.version>
     </properties>
 
